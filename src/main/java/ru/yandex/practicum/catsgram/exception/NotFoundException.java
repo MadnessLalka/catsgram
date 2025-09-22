@@ -1,4 +1,4 @@
-package ru.yandex.practicum.catsgram.controller.exception;
+package ru.yandex.practicum.catsgram.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {
