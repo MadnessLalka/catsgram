@@ -2,10 +2,12 @@ package ru.yandex.practicum.catsgram.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.model.Post;
 import ru.yandex.practicum.catsgram.service.PostService;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/posts")
@@ -21,6 +23,11 @@ public class PostController {
     @GetMapping
     public Collection<Post> findAll() {
         return postService.findAll();
+    }
+
+    @GetMapping("{id}")
+    public Optional<Post> getPostById(@PathVariable Long id){
+        return postService.getPostById(id);
     }
 
     @PostMapping

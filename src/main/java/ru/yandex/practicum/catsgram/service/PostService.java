@@ -2,14 +2,17 @@ package ru.yandex.practicum.catsgram.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
+import ru.yandex.practicum.catsgram.model.User;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -57,6 +60,11 @@ public class PostService {
         }
         throw new NotFoundException("Пост с id = " + newPost.getId() + " не найден");
     }
+
+    public Optional<Post> getPostById(@RequestBody Long id) {
+        return Optional.ofNullable(posts.get(id));
+    }
+
 
     private long getNextId() {
         long currentMaxId = posts.keySet()
