@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.catsgram.exception.ConditionsNotMetException;
 import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
-import ru.yandex.practicum.catsgram.model.User;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -26,7 +25,13 @@ public class PostService {
         this.userService = userService;
     }
 
-    public Collection<Post> findAll() {
+    public Collection<Post> findAll(Optional<String> sort, Optional<Integer> size, Optional<Integer> from) {
+        if (sort.isPresent() && size.isPresent() && from.isPresent()) {
+            System.out.println("Выбрана сортировка с отбрасыванием постов ");
+        } else if (sort.isPresent() && size.isPresent() && from.isEmpty()) {
+            System.out.println("Выбрана сортировка без отбрасывания постов ");
+        }
+
         return posts.values();
     }
 
