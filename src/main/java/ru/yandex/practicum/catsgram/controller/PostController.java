@@ -1,5 +1,6 @@
 package ru.yandex.practicum.catsgram.controller;
 
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.catsgram.model.Post;
@@ -21,9 +22,9 @@ public class PostController {
 
     @GetMapping
     public Collection<Post> findAll(
-            @RequestParam Optional<String> sort,
-            @RequestParam Optional<Integer> size,
-            @RequestParam Optional<Integer> from
+            @RequestParam(defaultValue = "asc") Optional<String> sort,
+            @RequestParam(defaultValue = "5") Optional<Integer> size,
+            @RequestParam(defaultValue = "10") Optional<Integer> from
     ) {
         return postService.findAll(sort, size, from);
     }

@@ -8,10 +8,8 @@ import ru.yandex.practicum.catsgram.exception.NotFoundException;
 import ru.yandex.practicum.catsgram.model.Post;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -28,12 +26,33 @@ public class PostService {
     public Collection<Post> findAll(Optional<String> sort, Optional<Integer> size, Optional<Integer> from) {
         if (sort.isPresent() && size.isPresent() && from.isPresent()) {
             System.out.println("Выбрана сортировка с отбрасыванием постов ");
+            List<Collection<Post>> postList = List.of(posts.values());
+
+            switch (SortOrder.from(String.valueOf(sort))){
+                case ASCENDING -> {
+                    return postList.stream()
+                            .sorted(Comparator.comparing(Post::getPostDate))
+                            .collect(Collectors.toList());
+                }
+            }
+
         } else if (sort.isPresent() && size.isPresent() && from.isEmpty()) {
             System.out.println("Выбрана сортировка без отбрасывания постов ");
         }
 
         return posts.values();
     }
+
+//    private List<Post> sortPostListByAscending(Collection<Post> postCollection){
+//        Comparator<Instant> instantAscComparator  = Collections.sort(postCollection, (pos))
+//        List<Post> sortedPostList = new ArrayList<>().stream()
+//                .sorted(Instant)
+//
+//        for (Post post : postCollection){
+//            sortedPostList.sort();
+//        }
+//    }
+
 
     public Post create(Post post) {
         if (post.getDescription() == null || post.getDescription().isBlank()) {
