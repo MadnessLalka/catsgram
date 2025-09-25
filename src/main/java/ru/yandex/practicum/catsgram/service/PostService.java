@@ -9,7 +9,6 @@ import ru.yandex.practicum.catsgram.model.Post;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 // Указываем, что класс PostService - является бином и его
 // нужно добавить в контекст приложения
@@ -24,35 +23,42 @@ public class PostService {
     }
 
     public Collection<Post> findAll(Optional<String> sort, Optional<Integer> size, Optional<Integer> from) {
-        if (sort.isPresent() && size.isPresent() && from.isPresent()) {
-            System.out.println("Выбрана сортировка с отбрасыванием постов ");
-            List<Collection<Post>> postList = List.of(posts.values());
-
-            switch (SortOrder.from(String.valueOf(sort))){
-                case ASCENDING -> {
-                    return postList.stream()
-                            .sorted(Comparator.comparing(Post::getPostDate))
-                            .collect(Collectors.toList());
+        List<Post> postList = new ArrayList<>(posts.values());
+        if (sort.isPresent() && size.isPresent() && from.isPresent() && size.get() > 0) {
+            if (from.get() + 1 <= postList.size() - 1) {
+                if (size.get() <= postList.size() &&
+                        size.get() <= ((postList.size() - 1 - from.get() + 1) + size.get() - 1)) {
+                    return sortPostList(SortOrder.from(sort.get()),
+                            postList.subList(from.get() + 1, (from.get() + 1 + size.get())));
+                } else {
+                    return sortPostList(SortOrder.from(sort.get()),
+                            postList.subList(from.get() + 1, postList.size()));
                 }
             }
+            throw new ConditionsNotMetException("From превышает допустимое количество постов");
 
-        } else if (sort.isPresent() && size.isPresent() && from.isEmpty()) {
-            System.out.println("Выбрана сортировка без отбрасывания постов ");
+        } else if (sort.isPresent() && size.isPresent() && size.get() > 0) {
+            if (size.get() >= postList.size()) {
+                return sortPostList(SortOrder.from(sort.get()), postList);
+            }
+
+            return sortPostList(SortOrder.from(sort.get()), postList.subList(0, size.get()));
         }
 
-        return posts.values();
+        return postList;
     }
 
-//    private List<Post> sortPostListByAscending(Collection<Post> postCollection){
-//        Comparator<Instant> instantAscComparator  = Collections.sort(postCollection, (pos))
-//        List<Post> sortedPostList = new ArrayList<>().stream()
-//                .sorted(Instant)
-//
-//        for (Post post : postCollection){
-//            sortedPostList.sort();
-//        }
-//    }
+    private Collection<Post> sortPostList(SortOrder sortOrder, Collection<Post> postCollection) {
+        if (sortOrder.equals(SortOrder.ASCENDING)) {
+            return postCollection.stream()
+                    .sorted(Comparator.comparing(Post::getPostDate))
+                    .toList();
+        }
+        return postCollection.stream()
+                .sorted(Comparator.comparing(Post::getPostDate).reversed())
+                .toList();
 
+    }
 
     public Post create(Post post) {
         if (post.getDescription() == null || post.getDescription().isBlank()) {

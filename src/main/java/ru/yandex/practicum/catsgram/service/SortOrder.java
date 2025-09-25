@@ -6,7 +6,7 @@ public enum SortOrder {
     public static SortOrder from(String order) {
         return switch (order.toLowerCase()) {
             case "ascending", "asc" -> ASCENDING;
-            case "descending", "des" -> DESCENDING;
+            case "descending", "desc" -> DESCENDING;
             default -> null;
         };
     }
